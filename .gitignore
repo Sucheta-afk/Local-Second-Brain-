@@ -1,0 +1,79 @@
+# 🔹 Python
+
+**pycache**/
+*.py[cod]
+*$py.class
+
+# 🔹 Virtual Environment
+
+venv/
+.env/
+.env.*
+
+# 🔹 OS files
+
+.DS_Store
+Thumbs.db
+
+# 🔹 Logs
+
+*.log
+
+# 🔹 IDEs / Editors
+
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 🔹 Streamlit
+
+.streamlit/secrets.toml
+
+# 🔹 Environment variables
+
+.env
+
+# 🔹 Data (you usually don't want to push raw data)
+
+data/
+
+# 🔹 Embeddings / Vector DB
+
+embeddings/
+*.faiss
+*.pkl
+*.bin
+
+# 🔹 Models (VERY important for LLM projects)
+
+models/
+*.gguf
+*.onnx
+*.pt
+*.pth
+
+# 🔹 SQLite / local DBs
+
+*.db
+*.sqlite3
+
+# 🔹 Temporary / cache files
+
+.cache/
+.tmp/
+temp/
+
+# 🔹 Build / packaging
+
+dist/
+build/
+*.egg-info/
+
+# 🔹 Jupyter (if you add later)
+
+.ipynb_checkpoints/
+
+# 🔹 Shell history / misc
+
+*.sh~
