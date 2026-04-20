@@ -62,7 +62,7 @@ with st.sidebar:
                 st.warning(f"No files found in {config.DATA_DIR}")
 
     st.divider()
-    mode = st.radio("Mode", ["💬 Chat", "💡 Ideas", "🔗 Connections", "🪞 Reflect", "❓ Questions", "🔍 Search"])
+    mode = st.radio("Mode", ["💬 Chat", "💡 Ideas", "🔗 Connections", "🪞 Reflect", "❓ Questions"])
 
     st.divider()
     if _index_ready():
@@ -140,9 +140,25 @@ elif mode == "🔗 Connections":
 
 elif mode == "🪞 Reflect":
     st.header("Daily Reflection")
+
     if st.button("Generate reflection"):
-        with st.spinner("Reflecting…"):
-            st.markdown(agent.reflect())
+        with st.spinner("Reflecting on your day…"):
+            from reflection import run_reflection_streamlit
+
+            result = run_reflection_streamlit()
+
+            if result["status"] == "no_data":
+                st.warning("No activity found for today.")
+            else:
+                st.success("Reflection saved ✅")
+
+                st.subheader("✨ Summary")
+                st.markdown(result["summary"])
+
+                with st.expander("🔍 Raw Work Context"):
+                    st.text(result["raw_context"])
+
+                st.caption(f"Saved to: {result['file']}")
 
 elif mode == "❓ Questions":
     st.header("Curiosity Engine")
@@ -150,15 +166,4 @@ elif mode == "❓ Questions":
         with st.spinner("Formulating questions…"):
             st.markdown(agent.ask_curiosity_questions())
 
-elif mode == "🔍 Search":
-    st.header("Similarity Search")
-    query = st.text_input("Search your knowledge base")
-    k = st.slider("Results", 1, 15, 5)
-    if query:
-        from vector_store import search
-        results = search(query, k=k)
-        if not results:
-            st.warning("No results found.")
-        for chunk, score in results:
-            with st.expander(f"📄 {chunk.source} · chunk {chunk.chunk_index} · score {score:.3f}"):
-                st.text(chunk.text)
+
