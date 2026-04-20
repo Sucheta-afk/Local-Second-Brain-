@@ -222,7 +222,7 @@ SUMMARY_PROMPT = """You are reviewing a developer's daily activity log. Produce 
 
 Use this exact format:
 
-✨ Projects Touched
+Projects Touched
 List each project One line each:
   • <project name> — <one sentence on what was done or which files were opened>
 
@@ -291,6 +291,50 @@ def run_reflection():
     console.print()
     console.print(f"[dim]✓ Appended to {REFLECTIONS_FILE}[/dim]")
 
+def run_reflection_streamlit() -> dict:
+    """
+    Streamlit-friendly version of reflection.
+    Returns structured data instead of printing to console.
+    """
+
+    work_context = build_work_context()
+
+    if not work_context:
+        return {
+            "status": "no_data",
+            "summary": None,
+            "raw_context": None,
+        }
+
+    summary = summarise(work_context)
+
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
+
+    entry = f"""
+## {timestamp}
+
+{summary}
+
+<details>
+<summary>Raw work context</summary>
+
+{work_context}
+
+</details>
+
+---
+"""
+
+    with open(REFLECTIONS_FILE, "a", encoding="utf-8") as f:
+        f.write(entry)
+
+    return {
+        "status": "success",
+        "summary": summary,
+        "raw_context": work_context,
+        "timestamp": timestamp,
+        "file": str(REFLECTIONS_FILE),
+    }
 
 if __name__ == "__main__":
     run_reflection()

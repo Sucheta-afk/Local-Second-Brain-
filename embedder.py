@@ -10,8 +10,7 @@ import config
 from ingestion import Chunk, load_chunks
 
 console = Console()
-_model: SentenceTransformer | None = None
-
+_model = SentenceTransformer("./models/all-MiniLM-L6-v2")
 
 def get_model() -> SentenceTransformer:
     global _model
