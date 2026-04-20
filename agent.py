@@ -60,9 +60,30 @@ class SecondBrainAgent:
         return complete(prompt, context="")
 
     def ask_curiosity_questions(self) -> str:
-        context = self._retrieve("projects experiments unfinished", k=6)
+        # Try multiple queries and merge results
+        queries = [
+            "notes ideas research",
+            "learning concepts topics",
+            "work code projects",
+        ]
+        from vector_store import search, format_context
+        seen = set()
+        results = []
+        for q in queries:
+            for chunk, score in search(q, k=3):
+                if chunk.chunk_index not in seen:
+                    seen.add(chunk.chunk_index)
+                    results.append((chunk, score))
+
+        if not results:
+            # Nuclear fallback — just grab the first N chunks directly
+            from ingestion import load_chunks
+            chunks = load_chunks()[:6]
+            results = [(c, 1.0) for c in chunks]
+
+        context = format_context(results)
         prompt = CURIOSITY_PROMPT.format(context=context)
-        return complete(prompt, context="")
+        return complete(prompt, context="")         # ← match other methods
 
     def search_and_show(self, query: str, k: int = 5):
         """Raw retrieval — show matching chunks without LLM."""
