@@ -54,12 +54,13 @@ class SecondBrainAgent:
         prompt = CONNECTIONS_PROMPT.format(context=context)
         return complete(prompt, context="")
 
-    def reflect(self) -> str:
+    def reflect(self, extra_context: str = "") -> str:
         context = self._retrieve("today's work learning notes", k=5)
-        prompt = REFLECTION_PROMPT.format(context=context)
+        combined = f"{extra_context}\n\n{context}".strip() if extra_context else context
+        prompt = REFLECTION_PROMPT.format(context=combined)
         return complete(prompt, context="")
 
-    def ask_curiosity_questions(self) -> str:
+    def ask_curiosity_questions(self, extra_context: str = "") -> str:
         # Try multiple queries and merge results
         queries = [
             "notes ideas research",
@@ -82,7 +83,8 @@ class SecondBrainAgent:
             results = [(c, 1.0) for c in chunks]
 
         context = format_context(results)
-        prompt = CURIOSITY_PROMPT.format(context=context)
+        combined = f"{extra_context}\n\n{context}".strip() if extra_context else context
+        prompt = CURIOSITY_PROMPT.format(context=combined)
         return complete(prompt, context="")         # ← match other methods
 
     def search_and_show(self, query: str, k: int = 5):
